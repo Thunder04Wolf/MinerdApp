@@ -28,39 +28,39 @@ const VisitaScreen = () => {
         setLocation(loc);
     };
 
-    const handleSubmit = () => {
-        const handleSubmit = async () => {
-            const data = {
-                directorId,
-                centroCode,
-                motivo,
-                comentario,
-                foto,
-                notaVoz,
-                latitude: location?.coords?.latitude,
-                longitude: location?.coords?.longitude,
-            };
 
-            try {
-                const response = await fetch('https://your-api-endpoint.com/register-visit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+    const handleSubmit = async () => {
+        const data = {
+            directorId,
+            centroCode,
+            motivo,
+            comentario,
+            foto,
+            notaVoz,
+            latitude: location?.coords?.latitude,
+            longitude: location?.coords?.longitude,
+        };
 
-                if (response.ok) {
-                    alert('Visita registrada exitosamente');
-                } else {
-                    alert('Error al registrar la visita');
-                }
-            } catch (error) {
-                console.error(error);
+        try {
+            const response = await fetch('https://your-api-endpoint.com/register-visit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                alert('Visita registrada exitosamente');
+            } else {
                 alert('Error al registrar la visita');
             }
-        };
+        } catch (error) {
+            console.error(error);
+            alert('Error al registrar la visita');
+        }
     };
+
 
     return (
         <View style={styles.container}>

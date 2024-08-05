@@ -8,6 +8,7 @@ const MenuScreen = ({ navigation }) => {
             <Button title="Consulta de Escuela por Código" onPress={() => navigation.navigate('Escuela')} />
             <Button title="Consulta de Director por Cédula" onPress={() => navigation.navigate('Director')} />
             <Button title="Registrar Visita" onPress={() => navigation.navigate('Visita')} />
+            <Button title='Noticias minerd' onPress={() => navigation.navigate('Noticias')}/>
         </View>
     );
 };
