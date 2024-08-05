@@ -6,7 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
-export default function RegisterVisitScreen({ navigation }) {
+export default function RegisterIncidenceScreen({ navigation }) {
   const [directorId, setDirectorId] = useState('');
   const [centerCode, setCenterCode] = useState('');
   const [date, setDate] = useState(new Date());
@@ -104,7 +104,7 @@ export default function RegisterVisitScreen({ navigation }) {
       return;
     }
 
-    const newVisit = {
+    const newIncidence = {
       directorId,
       centerCode,
       date: date.toISOString().split('T')[0],
@@ -117,14 +117,14 @@ export default function RegisterVisitScreen({ navigation }) {
     };
 
     try {
-      const storedVisits = await AsyncStorage.getItem('visits');
-      const visits = storedVisits ? JSON.parse(storedVisits) : [];
-      visits.push(newVisit);
-      await AsyncStorage.setItem('visits', JSON.stringify(visits));
-      Alert.alert('Éxito', '¡Visita registrada exitosamente!');
+      const storedIncidents = await AsyncStorage.getItem('incidents');
+      const incidents = storedIncidents ? JSON.parse(storedIncidents) : [];
+      incidents.push(newIncidence);
+      await AsyncStorage.setItem('incidents', JSON.stringify(incidents));
+      Alert.alert('Éxito', '¡Incidencia registrada exitosamente!');
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', 'No se pudo guardar la visita.');
+      Alert.alert('Error', 'No se pudo guardar la incidencia.');
       console.error(error);
     }
   };

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 export default function LoginScreen({ navigation }) {
   const [cedula, setCedula] = useState('');
@@ -12,7 +13,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     try {
-      const url = 'https://adamix.net/minerd/def/iniciar_sesion.php'; // Cambia esto a la URL correcta si es diferente.
+      const url = 'https://adamix.net/minerd/def/iniciar_sesion.php';
       let formData = new FormData();
       formData.append('cedula', cedula);
       formData.append('clave', clave);
@@ -25,8 +26,13 @@ export default function LoginScreen({ navigation }) {
       let result = await response.json();
 
       if (result.exito) {
+        const { token } = result.datos; // Extraer el token de la respuesta
+
+        // Guardar el token en AsyncStorage
+        await AsyncStorage.setItem('userToken', token);
+
         Alert.alert('Éxito', 'Inicio de sesión exitoso');
-        navigation.navigate('Home'); // Navegar a Home después del inicio de sesión
+        navigation.navigate('TechMenu'); // Navegar a Home después del inicio de sesión
       } else {
         Alert.alert('Error', result.mensaje);
       }
