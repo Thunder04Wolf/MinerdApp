@@ -2,24 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ViewVisitsScreen({ navigation }) {
-  const [visits, setVisits] = useState([]);
+export default function ViewIncidentsScreen({ navigation }) {
+  const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
-    const fetchVisits = async () => {
-      const storedVisits = await AsyncStorage.getItem('visits');
-      if (storedVisits) {
-        setVisits(JSON.parse(storedVisits));
+    const fetchIncidents = async () => {
+      const storedIncidents = await AsyncStorage.getItem('incidents');
+      if (storedIncidents) {
+        setIncidents(JSON.parse(storedIncidents));
       }
     };
 
-    fetchVisits();
+    fetchIncidents();
   }, []);
 
-  const renderVisit = ({ item }) => (
+  const renderIncidence = ({ item }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('VisitDetail', { visit: item })}
-      style={styles.visit}
+      onPress={() => navigation.navigate('IncidenceDetail', { incidence: item })}
+      style={styles.incidence}
     >
       <Text>Código del Centro: {item.centerCode}</Text>
       <Text>Fecha: {item.date}</Text>
@@ -30,8 +30,8 @@ export default function ViewVisitsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={visits}
-        renderItem={renderVisit}
+        data={incidents}
+        renderItem={renderIncidence}
         keyExtractor={(item, index) => index.toString()}
       />
     </View>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  visit: {
+  incidence: {
     padding: 16,
     borderBottomWidth: 1,
   },

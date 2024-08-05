@@ -2,9 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
-import RegisterVisitScreen from './screens/RegisterVisitScreen';
-import ViewVisitsScreen from './screens/ViewVisitScreen';
-import VisitDetailScreen from './screens/VisitDetailScreen';
+import RegisterIncidenceScreen from './screens/RegisterIncidenceScreen';
+import ViewIncidenceScreen from './screens/ViewIncidenceScreen';
+import IncidenceDetailScreen from './screens/IncidenceDetailScreen';
 import AboutScreen from './screens/AboutScreen'; 
 import RegisterScreen from './screens/RegisterScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -21,9 +21,9 @@ export default function App() {
           headerLeft: null,
           gestureEnabled: false,
         }} />
-        <Stack.Screen name="RegisterVisit" component={RegisterVisitScreen} />
-        <Stack.Screen name="ViewVisits" component={ViewVisitsScreen} />
-        <Stack.Screen name="VisitDetail" component={VisitDetailScreen} />
+        <Stack.Screen name="Registerincidents" component={RegisterIncidenceScreen} />
+        <Stack.Screen name="Viewincidents" component={ViewIncidenceScreen} />
+        <Stack.Screen name="incidentsDetail" component={IncidenceDetailScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="About" component={AboutScreen} />

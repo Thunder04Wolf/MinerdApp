@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
 import { Audio } from 'expo-av';
 
-export default function VisitDetailScreen({ route }) {
-  const { visit } = route.params;
+export default function IncidenceDetailScreen({ route }) {
+  const { incidence } = route.params;
   const [sound, setSound] = useState();
   const soundRef = useRef(null);
 
@@ -21,9 +21,9 @@ export default function VisitDetailScreen({ route }) {
 
   useEffect(() => {
     const loadSound = async () => {
-      if (visit.audioUri) {
+      if (incidence.audioUri) {
         const { sound: loadedSound } = await Audio.Sound.createAsync(
-          { uri: visit.audioUri }
+          { uri: incidence.audioUri }
         );
         soundRef.current = loadedSound;
       }
@@ -34,18 +34,18 @@ export default function VisitDetailScreen({ route }) {
         soundRef.current.unloadAsync();
       }
     };
-  }, [visit.audioUri]);
+  }, [incidence.audioUri]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Detalles de la Visita</Text>
-      <Text>Cédula del Director: {visit.directorId}</Text>
-      <Text>Código del Centro: {visit.centerCode}</Text>
-      <Text>Fecha: {visit.date}</Text>
-      <Text>Hora: {visit.time}</Text>
-      <Text>Comentario: {visit.comment}</Text>
-      {visit.photoUri && <Image source={{ uri: visit.photoUri }} style={styles.image} />}
-      {visit.audioUri && (
+      <Text style={styles.title}>Detalles de la Incidencia</Text>
+      <Text>Cédula del Director: {incidence.directorId}</Text>
+      <Text>Código del Centro: {incidence.centerCode}</Text>
+      <Text>Fecha: {incidence.date}</Text>
+      <Text>Hora: {incidence.time}</Text>
+      <Text>Comentario: {incidence.comment}</Text>
+      {incidence.photoUri && <Image source={{ uri: incidence.photoUri }} style={styles.image} />}
+      {incidence.audioUri && (
         <View>
           <Text>Audio:</Text>
           <Button title="Reproducir Audio" onPress={playSound} />
