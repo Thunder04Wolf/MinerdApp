@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 export default function RegisterScreen() {
   const [cedula, setCedula] = useState('');
@@ -14,26 +14,30 @@ export default function RegisterScreen() {
     if (!cedula || !nombre || !apellido || !clave || !correo || !telefono || !fechaNacimiento) {
       Alert.alert('Error', 'Todos los campos son requeridos.');
       return;
+    } else {
+      await saveUser();
     }
+  }
 
+  const saveUser = async () => {
+    const url = "https://adamix.net/minerd/def/registro.php";
+    
     try {
-      const response = await fetch('https://adamix.net/minerd/def/registro.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded', // Cambiar a application/x-www-form-urlencoded
-        },
-        body: new URLSearchParams({
-          cedula,
-          nombre,
-          apellido,
-          clave,
-          correo,
-          telefono,
-          fecha_nacimiento: fechaNacimiento,
-        }),
+      let formData = new FormData();
+      formData.append('cedula', cedula);
+      formData.append('nombre', nombre);
+      formData.append('apellido', apellido);
+      formData.append('clave', clave);
+      formData.append('correo', correo);
+      formData.append('telefono', telefono);
+      formData.append('fecha_nacimiento', fechaNacimiento);
+
+      let response = await fetch(url, {
+        method: "POST",
+        body: formData
       });
 
-      const result = await response.json();
+      let result = await response.json();
 
       if (result.exito) {
         Alert.alert('Éxito', 'Registro exitoso');
@@ -51,46 +55,46 @@ export default function RegisterScreen() {
       <TextInput
         placeholder="Cédula"
         value={cedula}
-        onChangeText={setCedula}
+        onChangeText={(text) => setCedula(text)}
         style={styles.input}
       />
       <TextInput
         placeholder="Nombre"
         value={nombre}
-        onChangeText={setNombre}
+        onChangeText={(text) => setNombre(text)}
         style={styles.input}
       />
       <TextInput
         placeholder="Apellido"
         value={apellido}
-        onChangeText={setApellido}
+        onChangeText={(text) => setApellido(text)}
         style={styles.input}
       />
       <TextInput
         placeholder="Clave"
         value={clave}
-        onChangeText={setClave}
+        onChangeText={(text) => setClave(text)}
         secureTextEntry
         style={styles.input}
       />
       <TextInput
         placeholder="Correo"
         value={correo}
-        onChangeText={setCorreo}
+        onChangeText={(text) => setCorreo(text)}
         keyboardType="email-address"
         style={styles.input}
       />
       <TextInput
         placeholder="Teléfono"
         value={telefono}
-        onChangeText={setTelefono}
+        onChangeText={(text) => setTelefono(text)}
         keyboardType="phone-pad"
         style={styles.input}
       />
       <TextInput
         placeholder="Fecha de Nacimiento (YYYY-MM-DD)"
         value={fechaNacimiento}
-        onChangeText={setFechaNacimiento}
+        onChangeText={(text) => setFechaNacimiento(text)}
         style={styles.input}
       />
       <Button title="Registrarse" onPress={handleRegister} />
@@ -112,4 +116,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 });
-r
