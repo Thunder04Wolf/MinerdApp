@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
-export default function RegisterScreen() {
+export default function RegisterScreen({ navigation }) {
   const [cedula, setCedula] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
@@ -41,6 +41,7 @@ export default function RegisterScreen() {
 
       if (result.exito) {
         Alert.alert('Éxito', 'Registro exitoso');
+        navigation.navigate('Login'); // Navegar a Login después del registro
       } else {
         Alert.alert('Error', result.mensaje);
       }

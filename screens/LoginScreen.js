@@ -26,6 +26,7 @@ export default function LoginScreen({ navigation }) {
 
       if (result.exito) {
         Alert.alert('Éxito', 'Inicio de sesión exitoso');
+        navigation.navigate('Home'); // Navegar a Home después del inicio de sesión
       } else {
         Alert.alert('Error', result.mensaje);
       }
