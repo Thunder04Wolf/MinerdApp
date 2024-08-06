@@ -1,32 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './useAuth';
 
 export default function ViewAllVisits({ navigation }) {
   const [visitTypes, setVisitTypes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState('');
-
-  useEffect(() => {
-    const fetchTokenAndVisitTypes = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem('userToken');
-        if (storedToken) {
-          setToken(storedToken);
-          await fetchAllVisitTypes(storedToken);
-        } else {
-          Alert.alert('Error', 'No se encontró un token de autenticación.');
-          navigation.navigate('Login');
-        }
-      } catch (e) {
-        console.error(e);
-        Alert.alert('Error', 'Hubo un problema al obtener el token.');
-        navigation.navigate('Login');
-      }
-    };
-
-    fetchTokenAndVisitTypes();
-  }, [navigation]);
 
   const fetchAllVisitTypes = async (authToken) => {
     try {
@@ -54,13 +32,15 @@ export default function ViewAllVisits({ navigation }) {
       }
 
       setVisitTypes(allVisitTypes);
-      setLoading(false);
     } catch (error) {
       Alert.alert('Error', 'No se pudo conectar con el servidor.');
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
+
+  useAuth(navigation, fetchAllVisitTypes);
 
   const renderVisitTypeItem = ({ item }) => (
     <TouchableOpacity
@@ -74,23 +54,21 @@ export default function ViewAllVisits({ navigation }) {
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Cargando tipos de visitas...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={visitTypes}
-        renderItem={renderVisitTypeItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<Text>No hay tipos de visitas registrados.</Text>}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007BFF" />
+          <Text style={styles.loadingText}>Cargando tipos de visitas...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={visitTypes}
+          renderItem={renderVisitTypeItem}
+          keyExtractor={(item) => item.id.toString()}
+          ListEmptyComponent={<Text style={styles.emptyText}>No hay tipos de visitas registrados.</Text>}
+        />
+      )}
     </View>
   );
 }
@@ -99,15 +77,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#f0f0f0',
   },
   itemContainer: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 10,
+    elevation: 2,
   },
   itemTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
   },
   itemSubtitle: {
     fontSize: 14,
@@ -117,5 +99,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
   },
 });

@@ -5,13 +5,13 @@ import {
   TextInput,
   Button,
   StyleSheet,
-  Image,
   Alert,
   Modal,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  ScrollView
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -37,53 +37,25 @@ export default function RegisterVisitScreen({ navigation }) {
   useEffect(() => {
     const fetchTokenAndMotivos = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("userToken");
+        const storedToken = await AsyncStorage.getItem("token");
         if (storedToken) {
           setToken(storedToken);
-          await fetchAllMotivos(storedToken);
-        } else {
-          Alert.alert("Error", "No se encontró un token de autenticación.");
-          navigation.navigate("Login");
         }
-      } catch (e) {
-        console.error(e);
-        Alert.alert("Error", "Hubo un problema al obtener el token.");
-        navigation.navigate("Login");
+
+        const response = await fetch("https://adamix.net/minerd/def/motivos.php");
+        const data = await response.json();
+        if (data.motivos) {
+          setMotivos(data.motivos);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingMotivos(false);
       }
     };
 
     fetchTokenAndMotivos();
-  }, [navigation]);
-
-  const fetchAllMotivos = async (authToken) => {
-    try {
-      const allMotivos = [];
-      const urlBase = "https://adamix.net/minerd/def/situacion.php?token=";
-
-      for (let id = 1; id <= 35; id++) {
-        const url = `${urlBase}${authToken}&situacion_id=${id}`;
-        let response = await fetch(url);
-        let result = await response.json();
-
-        if (result.exito && result.datos && result.datos.motivo) {
-          allMotivos.push(result.datos.motivo);
-        }
-      }
-
-      const uniqueMotivos = Array.from(new Set(allMotivos));
-      const motivoList = uniqueMotivos.map((motivo, index) => ({
-        id: index.toString(),
-        motivo,
-      }));
-
-      setMotivos(motivoList);
-      setIsLoadingMotivos(false);
-    } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor.");
-      console.error(error);
-      setIsLoadingMotivos(false);
-    }
-  };
+  }, []);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || fecha;
@@ -97,55 +69,52 @@ export default function RegisterVisitScreen({ navigation }) {
     setHora(currentTime);
   };
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
-
-  const showTimepicker = () => {
-    setShowTimePicker(true);
-  };
-
-  const handleRegisterVisit = async () => {
-    if (
-      !cedulaDirector ||
-      !codigoCentro ||
-      !motivo ||
-      !comentario ||
-      !latitud ||
-      !longitud ||
-      !fecha ||
-      !hora ||
-      !token
-    ) {
+  const handleRegister = async () => {
+    if (!cedulaDirector || !codigoCentro || !motivo || !comentario) {
       Alert.alert("Error", "Todos los campos son requeridos.");
       return;
     }
 
-    const formattedDate = fecha.toISOString().split("T")[0];
-    const formattedTime = hora.toTimeString().substring(0, 5);
+    const url = "https://adamix.net/minerd/def/visitas.php";
+    const fechaString = `${fecha.getFullYear()}-${('0' + (fecha.getMonth() + 1)).slice(-2)}-${('0' + fecha.getDate()).slice(-2)}`;
+    const horaString = `${('0' + hora.getHours()).slice(-2)}:${('0' + hora.getMinutes()).slice(-2)}`;
 
     try {
-      const url = "https://adamix.net/minerd/minerd/registrar_visita.php";
       let formData = new FormData();
       formData.append("cedula_director", cedulaDirector);
       formData.append("codigo_centro", codigoCentro);
       formData.append("motivo", motivo);
       formData.append("comentario", comentario);
+      formData.append("fecha", fechaString);
+      formData.append("hora", horaString);
       formData.append("latitud", latitud);
       formData.append("longitud", longitud);
-      formData.append("fecha", formattedDate);
-      formData.append("hora", formattedTime);
-      formData.append("token", token);
-      formData.append("foto_evidencia", fotoUri);
-      formData.append("nota_voz", audioUri);
+
+      if (fotoUri) {
+        formData.append("foto", {
+          uri: fotoUri,
+          type: "image/jpeg",
+          name: "foto.jpg",
+        });
+      }
+
+      if (audioUri) {
+        formData.append("audio", {
+          uri: audioUri,
+          type: "audio/mpeg",
+          name: "audio.mp3",
+        });
+      }
 
       let response = await fetch(url, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
       let result = await response.json();
-
       if (result.exito) {
         Alert.alert("Éxito", "Visita registrada exitosamente");
         navigation.navigate("Home");
@@ -158,20 +127,9 @@ export default function RegisterVisitScreen({ navigation }) {
     }
   };
 
-  const renderMotivoItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.modalItem}
-      onPress={() => {
-        setMotivo(item.motivo);
-        setModalVisible(false);
-      }}
-    >
-      <Text>{item.motivo}</Text>
-    </TouchableOpacity>
-  );
-
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Registrar Visita</Text>
       <TextInput
         placeholder="Cédula del Director"
         value={cedulaDirector}
@@ -184,20 +142,8 @@ export default function RegisterVisitScreen({ navigation }) {
         onChangeText={setCodigoCentro}
         style={styles.input}
       />
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => {
-          if (!isLoadingMotivos) {
-            setModalVisible(true);
-          } else {
-            Alert.alert(
-              "Cargando",
-              "Por favor, espere mientras se cargan los motivos."
-            );
-          }
-        }}
-      >
-        <Text>{motivo || "Selecciona el motivo"}</Text>
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.input}>
+        <Text style={styles.selectText}>{motivo || "Seleccionar Motivo"}</Text>
       </TouchableOpacity>
       <TextInput
         placeholder="Comentario"
@@ -205,31 +151,12 @@ export default function RegisterVisitScreen({ navigation }) {
         onChangeText={setComentario}
         style={styles.input}
       />
-      <TextInput
-        placeholder="Latitud"
-        value={latitud}
-        onChangeText={setLatitud}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Longitud"
-        value={longitud}
-        onChangeText={setLongitud}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Ruta de la Imagen"
-        value={fotoUri}
-        onChangeText={setFotoUri}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Ruta del Audio"
-        value={audioUri}
-        onChangeText={setAudioUri}
-        style={styles.input}
-      />
-      <Button title="Seleccionar Fecha" onPress={showDatepicker} />
+      <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.dateText}>{`${fecha.getFullYear()}-${('0' + (fecha.getMonth() + 1)).slice(-2)}-${('0' + fecha.getDate()).slice(-2)}`}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.input} onPress={() => setShowTimePicker(true)}>
+        <Text style={styles.dateText}>{`${('0' + hora.getHours()).slice(-2)}:${('0' + hora.getMinutes()).slice(-2)}`}</Text>
+      </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
           value={fecha}
@@ -238,7 +165,6 @@ export default function RegisterVisitScreen({ navigation }) {
           onChange={handleDateChange}
         />
       )}
-      <Button title="Seleccionar Hora" onPress={showTimepicker} />
       {showTimePicker && (
         <DateTimePicker
           value={hora}
@@ -247,72 +173,109 @@ export default function RegisterVisitScreen({ navigation }) {
           onChange={handleTimeChange}
         />
       )}
-      <Text>Fecha: {fecha.toISOString().split("T")[0]}</Text>
-      <Text>Hora: {hora.toTimeString().substring(0, 5)}</Text>
-      <Button title="Registrar Visita" onPress={handleRegisterVisit} />
-
-      {/* Modal para seleccionar motivo */}
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
+      <View style={styles.buttonContainer}>
+        <Button title="Registrar" onPress={handleRegister} color="#007BFF" />
+      </View>
+      <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {isLoadingMotivos ? (
-              <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-              <FlatList
-                data={motivos}
-                renderItem={renderMotivoItem}
-                keyExtractor={(item) => item.id}
-              />
-            )}
-            <Button title="Cerrar" onPress={() => setModalVisible(false)} />
-          </View>
+          {isLoadingMotivos ? (
+            <ActivityIndicator size="large" color="#007BFF" />
+          ) : (
+            <FlatList
+              data={motivos}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.modalItem}
+                  onPress={() => {
+                    setMotivo(item.descripcion);
+                    setModalVisible(false);
+                  }}
+                >
+                  <Text style={styles.modalItemText}>{item.descripcion}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+            />
+          )}
+          <TouchableOpacity
+            style={styles.modalCloseButton}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.modalCloseText}>Cerrar</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 16,
-    justifyContent: "center",
+    backgroundColor: "#f0f0f0",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 32,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
-    borderBottomWidth: 1,
+    width: "100%",
+    height: 50,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingHorizontal: 16,
     marginBottom: 16,
-    paddingHorizontal: 8,
+    fontSize: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
   },
-  image: {
-    width: 100,
-    height: 100,
-    resizeMode: "cover",
-    marginVertical: 16,
+  selectText: {
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 50,
+    textAlign: "center",
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+    lineHeight: 50,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: 16,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    width: "100%",
+    width: "90%",
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  modalCloseButton: {
+    marginTop: 16,
+    backgroundColor: "#007BFF",
+    borderRadius: 8,
+    padding: 12,
+  },
+  modalCloseText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
 });

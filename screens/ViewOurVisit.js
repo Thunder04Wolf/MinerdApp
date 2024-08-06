@@ -1,32 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './useAuth';
 
 export default function ViewOurVisits({ navigation }) {
   const [visits, setVisits] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState('');
-
-  useEffect(() => {
-    const fetchTokenAndVisits = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem('userToken');
-        if (storedToken) {
-          setToken(storedToken);
-          await fetchVisits(storedToken);
-        } else {
-          Alert.alert('Error', 'No se encontró un token de autenticación.');
-          navigation.navigate('Login');
-        }
-      } catch (e) {
-        console.error(e);
-        Alert.alert('Error', 'Hubo un problema al obtener el token.');
-        navigation.navigate('Login');
-      }
-    };
-
-    fetchTokenAndVisits();
-  }, [navigation]);
 
   const fetchVisits = async (authToken) => {
     try {
@@ -46,6 +24,8 @@ export default function ViewOurVisits({ navigation }) {
     }
   };
 
+  useAuth(navigation, fetchVisits);
+
   const renderVisitItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
@@ -64,23 +44,21 @@ export default function ViewOurVisits({ navigation }) {
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Cargando visitas...</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={visits}
-        renderItem={renderVisitItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<Text>No hay visitas registradas.</Text>}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007BFF" />
+          <Text style={styles.loadingText}>Cargando visitas...</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={visits}
+          renderItem={renderVisitItem}
+          keyExtractor={(item) => item.id.toString()}
+          ListEmptyComponent={<Text style={styles.emptyText}>No hay visitas registradas.</Text>}
+        />
+      )}
     </View>
   );
 }
@@ -89,15 +67,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#f0f0f0',
   },
   itemContainer: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 10,
+    elevation: 2,
   },
   itemTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
   },
   itemSubtitle: {
     fontSize: 14,
@@ -107,5 +89,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
   },
 });

@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { View, Button, StyleSheet, Alert, Text } from 'react-native';
+import React from 'react';
+import { View, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const handleLogout = async (navigation) => {
   try {
     await AsyncStorage.removeItem('userToken');
     Alert.alert("Has cerrado sesión correctamente");
-    navigation.navigate('Login');
+    navigation.navigate('Home');
   } catch (e) {
     Alert.alert("Error al cerrar sesión");
     console.error(e);
@@ -14,44 +14,51 @@ const handleLogout = async (navigation) => {
 };
 
 export default function TechMenu({ navigation }) {
-  useEffect(() => {
-    const checkAuthToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) {
-          Alert.alert('No autorizado', 'Por favor, inicia sesión para continuar.');
-          navigation.navigate('Login');
-        }
-      } catch (e) {
-        Alert.alert("Error", "Hubo un problema verificando la autenticación.");
-        console.error(e);
-        navigation.navigate('Login');
-      }
-    };
-
-    checkAuthToken();
-
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Cerrar Sesión"
-          onPress={() => handleLogout(navigation)}
-          color="red"
-        />
-      ),
-    });
-  }, [navigation]);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido a la pantalla de inicio</Text>
-      <Button title="Registrar Incidencia" onPress={() => navigation.navigate('RegisterVisit')} />
-      <Button title="Ver Visitas Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
-      <Button title="Ver Todas las Visitas Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
-      <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SearchSchoolsByRegion')} />
-      <Button title="Lista de Cédulas de Directores" onPress={() => navigation.navigate('Lista de Cédulas de Directores')} />
-      <Button title="MapScreen" onPress={() => navigation.navigate('MapScreen')} />
-
+      <Text style={styles.welcomeText}>Bienvenido a la pantalla de técnico</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('RegisterVisit')}
+      >
+        <Text style={styles.buttonText}>Registrar Incidencia</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('ViewOurVisits')}
+      >
+        <Text style={styles.buttonText}>Ver Visitas Registradas</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('ViewAllVisits')}
+      >
+        <Text style={styles.buttonText}>Ver Todas las Visitas Registradas</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('SearchSchoolsByRegion')}
+      >
+        <Text style={styles.buttonText}>Busqueda de escuela por su código</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('ListDirectors')}
+      >
+        <Text style={styles.buttonText}>Lista de Cédulas de Directores</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('MapScreen')}
+      >
+        <Text style={styles.buttonText}>MapScreen</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, styles.dangerButton]}
+        onPress={() => handleLogout(navigation)}
+      >
+        <Text style={styles.buttonText}>Cerrar Sesión</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -59,12 +66,36 @@ export default function TechMenu({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    padding: 20,
   },
   welcomeText: {
     fontSize: 24,
-    marginBottom: 20,
+    marginBottom: 30,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  button: {
+    width: "100%",
+    padding: 15,
+    marginVertical: 10,
+    backgroundColor: "#007BFF",
+    borderRadius: 8,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  dangerButton: {
+    backgroundColor: "#FF4136",
   },
 });

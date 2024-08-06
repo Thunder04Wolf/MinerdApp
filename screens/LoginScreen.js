@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
+import React, { useState, useEffect, useContext } from 'react';
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Alert,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../AuthContext';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ route }) {
   const [cedula, setCedula] = useState('');
   const [clave, setClave] = useState('');
+  const { login } = useContext(AuthContext);
+
+  // Get cedula parameter from route params
+  useEffect(() => {
+    if (route.params?.cedula) {
+      setCedula(route.params.cedula);
+    }
+  }, [route.params?.cedula]);
 
   const handleLogin = async () => {
     if (!cedula || !clave) {
@@ -26,20 +44,17 @@ export default function LoginScreen({ navigation }) {
       let result = await response.json();
 
       if (result.exito) {
-        const { token } = result.datos; // Extraer el token de la respuesta
+        const { token } = result.datos;
 
-        // Guardar el token en AsyncStorage
         await AsyncStorage.setItem('userToken', token);
 
         Alert.alert('Éxito', 'Inicio de sesión exitoso');
-        navigation.navigate('TechMenu'); // Navegar a Home después del inicio de sesión
+        login(token); // Use AuthContext to navigate
       } else {
         Alert.alert('Error', result.mensaje);
       }
 
-      // Mostrar en la consola la respuesta completa de la API
       console.log(result);
-
     } catch (error) {
       Alert.alert('Error', 'No se pudo conectar con el servidor.');
       console.error(error);
@@ -47,29 +62,34 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder="Cédula"
-        value={cedula}
-        onChangeText={(text) => setCedula(text)}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Clave"
-        value={clave}
-        onChangeText={(text) => setClave(text)}
-        secureTextEntry
-        style={styles.input}
-      />
-      <Button title="Iniciar Sesión" onPress={handleLogin} />
-      
-      <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>¿No tienes cuenta?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.registerButton}>Regístrate</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Bienvenido</Text>
+        <TextInput
+          placeholder="Cédula"
+          value={cedula}
+          onChangeText={(text) => setCedula(text)}
+          style={styles.input}
+          keyboardType="numeric"
+        />
+        <TextInput
+          placeholder="Clave"
+          value={clave}
+          onChangeText={(text) => setClave(text)}
+          secureTextEntry
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Iniciar Sesión</Text>
         </TouchableOpacity>
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>¿No tienes cuenta?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.registerButton}>Regístrate</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -78,25 +98,60 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 32,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderBottomWidth: 1,
+    width: '100%',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 16,
     marginBottom: 16,
-    paddingHorizontal: 8,
+    fontSize: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  button: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#007BFF',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
   registerContainer: {
     marginTop: 16,
+    flexDirection: 'row',
     alignItems: 'center',
   },
   registerText: {
     fontSize: 16,
-    color: 'gray',
+    color: '#666',
   },
   registerButton: {
     fontSize: 16,
-    color: 'blue',
-    marginTop: 4,
+    color: '#007BFF',
+    marginLeft: 4,
   },
 });

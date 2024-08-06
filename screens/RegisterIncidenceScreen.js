@@ -15,8 +15,6 @@ export default function RegisterIncidenceScreen({ navigation }) {
   const [photoUri, setPhotoUri] = useState('');
   const [audioUri, setAudioUri] = useState('');
   const [recording, setRecording] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
   const [location, setLocation] = useState(null);
   const soundRef = useRef(null);
 
@@ -80,22 +78,12 @@ export default function RegisterIncidenceScreen({ navigation }) {
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShowDatePicker(Platform.OS === 'ios');
     setDate(currentDate);
   };
 
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || time;
-    setShowTimePicker(Platform.OS === 'ios');
     setTime(currentTime);
-  };
-
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
-
-  const showTimepicker = () => {
-    setShowTimePicker(true);
   };
 
   const handleSubmit = async () => {
@@ -143,8 +131,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
         onChangeText={setCenterCode}
         style={styles.input}
       />
-      <Button title="Seleccionar Fecha" onPress={showDatepicker} />
-      {showDatePicker && (
+      {Platform.OS === 'android' && (
         <DateTimePicker
           value={date}
           mode="date"
@@ -152,12 +139,27 @@ export default function RegisterIncidenceScreen({ navigation }) {
           onChange={handleDateChange}
         />
       )}
-      <Button title="Seleccionar Hora" onPress={showTimepicker} />
-      {showTimePicker && (
+      {Platform.OS === 'ios' && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display="inline"
+          onChange={handleDateChange}
+        />
+      )}
+      {Platform.OS === 'android' && (
         <DateTimePicker
           value={time}
           mode="time"
           display="default"
+          onChange={handleTimeChange}
+        />
+      )}
+      {Platform.OS === 'ios' && (
+        <DateTimePicker
+          value={time}
+          mode="time"
+          display="inline"
           onChange={handleTimeChange}
         />
       )}
