@@ -25,13 +25,7 @@ const handleLogout = async (navigation) => {
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     navigation.setOptions({
-         headerRight: () => (
-        <Button
-          title="Cerrar Sesión"
-          onPress={() => handleLogout(navigation)}
-          color="red"
-        />
-      ),
+     
     });
   }, [navigation]);
 
