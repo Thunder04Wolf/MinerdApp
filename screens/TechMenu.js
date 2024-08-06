@@ -15,15 +15,23 @@ const handleLogout = async (navigation) => {
 
 export default function TechMenu({ navigation }) {
   useEffect(() => {
+    const checkAuthToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) {
+          Alert.alert('No autorizado', 'Por favor, inicia sesión para continuar.');
+          navigation.navigate('Login');
+        }
+      } catch (e) {
+        Alert.alert("Error", "Hubo un problema verificando la autenticación.");
+        console.error(e);
+        navigation.navigate('Login');
+      }
+    };
+
+    checkAuthToken();
+
     navigation.setOptions({
-    //   headerLeft: () => (
-    //     <Button
-    //       title=""
-    //       onPress={() => null}
-    //       color="transparent"
-    //       borderColor="transparent"
-    //     />
-    //   ),
       headerRight: () => (
         <Button
           title="Cerrar Sesión"
@@ -38,7 +46,7 @@ export default function TechMenu({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Bienvenido a la pantalla de inicio</Text>
       <Button title="Registrar Incidencia" onPress={() => navigation.navigate('RegisterVisit')} />
-      <Button title="Ver Incidencias Registradas" onPress={() => navigation.navigate('ViewVisits')} />
+      <Button title="Ver Incidencias Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
     </View>
   );
 }

@@ -10,7 +10,8 @@ import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 import TechMenu from "./screens/TechMenu";
 import RegisterVisit from "./screens/RegisterVisitScreen";
-
+import NoticiasScreen from "./screens/NoticiasScreen";
+import ViewOurVisit from "./screens/ViewOurVisit";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,8 @@ export default function App() {
           name="TechMenu"
           component={TechMenu}
         />
+        <Stack.Screen name="Noticias" component={NoticiasScreen} />
+
         <Stack.Screen
           name="RegisterIncidents"
           component={RegisterIncidenceScreen}
@@ -39,10 +42,14 @@ export default function App() {
         />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="RegisterVisit" component={RegisterVisit} />
+        <Stack.Screen name="ViewOurVisits" component={ViewOurVisit} />
 
-        <Stack.Screen name="Login" component={LoginScreen} 
+
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
           options={{ headerBackVisible: false }}
-          />
+        />
         <Stack.Screen name="About" component={AboutScreen} />
       </Stack.Navigator>
     </NavigationContainer>

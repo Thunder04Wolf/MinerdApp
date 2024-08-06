@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { View, Button, StyleSheet, Alert, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from "react";
+import { View, Button, StyleSheet, Alert, Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const clearStorage = async () => {
   try {
@@ -13,9 +13,9 @@ const clearStorage = async () => {
 
 const handleLogout = async (navigation) => {
   try {
-    await AsyncStorage.removeItem('userToken');
+    await AsyncStorage.removeItem("userToken");
     Alert.alert("Has cerrado sesión correctamente");
-    navigation.navigate('Login');
+    navigation.navigate("Login");
   } catch (e) {
     Alert.alert("Error al cerrar sesión");
     console.error(e);
@@ -24,19 +24,36 @@ const handleLogout = async (navigation) => {
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
-    navigation.setOptions({
-     
-    });
+    navigation.setOptions({});
   }, [navigation]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Bienvenido a la pantalla de inicio</Text>
-      <Button title="Registrar Visita" onPress={() => navigation.navigate('RegisterVisit')} />
-      <Button title="Ver Visitas Registradas" onPress={() => navigation.navigate('ViewVisits')} />
-      <Button title="Opciones de Técnico" onPress={() => navigation.navigate('TechMenu')} />
-      <Button title="Acerca de" onPress={() => navigation.navigate('About')} />
-      <Button title="Borrar Todos los Registros" onPress={clearStorage} color="red" />
+      <Button
+        title="Registrar Visita"
+        onPress={() => navigation.navigate("RegisterVisit")}
+      />
+      <Button
+        title="Ver Visitas Registradas"
+        onPress={() => navigation.navigate("ViewVisits")}
+      />
+      <Button
+        title="Opciones de Técnico"
+        onPress={() => navigation.navigate("TechMenu")}
+      />
+      <Button
+        title="Noticias minerd"
+        onPress={() => navigation.navigate("Noticias")}
+      />
+
+      <Button title="Acerca de" onPress={() => navigation.navigate("About")} />
+
+      <Button
+        title="Borrar Todos los Registros"
+        onPress={clearStorage}
+        color="red"
+      />
     </View>
   );
 }
@@ -44,8 +61,8 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 40,
   },
   welcomeText: {
