@@ -14,7 +14,9 @@ import NoticiasScreen from "./screens/NoticiasScreen";
 import ViewOurVisit from "./screens/ViewOurVisit";
 import ViewAllVisit from "./screens/ViewAllVisit";
 import VisitDetailsScreen from "./screens/VisitDetailsScreen";
-import SeacrhScreen from "./screens/SeacrhScreen";
+import SearchSchoolsByRegion from "./screens/SearchSchoolsByRegion";
+import SchoolDetails from "./screens/SchoolDetails";
+
 
 
 
@@ -50,7 +52,9 @@ export default function App() {
         <Stack.Screen name="ViewOurVisits" component={ViewOurVisit} />
         <Stack.Screen name="ViewAllVisits" component={ViewAllVisit} />
         <Stack.Screen name="VisitDetailsScreen" component={VisitDetailsScreen} />
-        <Stack.Screen name="SeacrhScreen" component={SeacrhScreen} />
+        <Stack.Screen name="SearchSchoolsByRegion" component={SearchSchoolsByRegion} />
+        <Stack.Screen name="SchoolDetails" component={SchoolDetails} />
+
 
 
 

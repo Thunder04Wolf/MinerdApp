@@ -46,9 +46,9 @@ export default function TechMenu({ navigation }) {
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Bienvenido a la pantalla de inicio</Text>
       <Button title="Registrar Incidencia" onPress={() => navigation.navigate('RegisterVisit')} />
-      <Button title="Ver Incidencias Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
-      <Button title="Ver Todas las Incidencias Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
-      <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SeacrhScreen')} />
+      <Button title="Ver Visitas Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
+      <Button title="Ver Todas las Visitas Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
+      <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SearchSchoolsByRegion')} />
 
     </View>
   );
