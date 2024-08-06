@@ -18,6 +18,7 @@ import SearchSchoolsByRegion from "./screens/SearchSchoolsByRegion";
 import SchoolDetails from "./screens/SchoolDetails";
 import ListDirectors from "./screens/ListDirectors";
 import MapScreen from "./screens/MapScreen";
+import HoroscopeScreen from "./screens/HoroscopeScreen";
 
 
 
@@ -58,6 +59,7 @@ export default function App() {
         <Stack.Screen name="SchoolDetails" component={SchoolDetails} />
         <Stack.Screen name="Lista de Cédulas de Directores" component={ListDirectors} />
         <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="HoroscopeScreen" component={HoroscopeScreen} />
 
 
 

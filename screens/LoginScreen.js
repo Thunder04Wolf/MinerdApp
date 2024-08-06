@@ -1,6 +1,7 @@
+// LoginScreen.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation }) {
   const [cedula, setCedula] = useState('');
@@ -26,18 +27,18 @@ export default function LoginScreen({ navigation }) {
       let result = await response.json();
 
       if (result.exito) {
-        const { token } = result.datos; // Extraer el token de la respuesta
+        const { token, fecha_nacimiento } = result.datos; // Extraer el token y la fecha de nacimiento de la respuesta
 
-        // Guardar el token en AsyncStorage
+        // Guardar el token y la fecha de nacimiento en AsyncStorage
         await AsyncStorage.setItem('userToken', token);
+        await AsyncStorage.setItem('fechaNacimiento', fecha_nacimiento);
 
         Alert.alert('Éxito', 'Inicio de sesión exitoso');
-        navigation.navigate('TechMenu'); // Navegar a Home después del inicio de sesión
+        navigation.navigate('TechMenu');
       } else {
         Alert.alert('Error', result.mensaje);
       }
 
-      // Mostrar en la consola la respuesta completa de la API
       console.log(result);
 
     } catch (error) {

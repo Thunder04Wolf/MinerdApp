@@ -51,7 +51,8 @@ export default function TechMenu({ navigation }) {
       <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SearchSchoolsByRegion')} />
       <Button title="Lista de Cédulas de Directores" onPress={() => navigation.navigate('Lista de Cédulas de Directores')} />
       <Button title="MapScreen" onPress={() => navigation.navigate('MapScreen')} />
-
+      <Button title="HoroscopeScreen" onPress={() => navigation.navigate('HoroscopeScreen')} />
+      
     </View>
   );
 }
