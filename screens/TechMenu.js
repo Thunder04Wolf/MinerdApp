@@ -47,6 +47,8 @@ export default function TechMenu({ navigation }) {
       <Text style={styles.welcomeText}>Bienvenido a la pantalla de inicio</Text>
       <Button title="Registrar Incidencia" onPress={() => navigation.navigate('RegisterVisit')} />
       <Button title="Ver Incidencias Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
+      <Button title="Ver Todas las Incidencias Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
+
     </View>
   );
 }

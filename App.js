@@ -12,6 +12,10 @@ import TechMenu from "./screens/TechMenu";
 import RegisterVisit from "./screens/RegisterVisitScreen";
 import NoticiasScreen from "./screens/NoticiasScreen";
 import ViewOurVisit from "./screens/ViewOurVisit";
+import ViewAllVisit from "./screens/ViewAllVisit";
+import VisitDetailsScreen from "./screens/VisitDetailsScreen";
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +47,11 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="RegisterVisit" component={RegisterVisit} />
         <Stack.Screen name="ViewOurVisits" component={ViewOurVisit} />
+        <Stack.Screen name="ViewAllVisits" component={ViewAllVisit} />
+        <Stack.Screen name="VisitDetailsScreen" component={VisitDetailsScreen} />
+
+
+
 
 
         <Stack.Screen
