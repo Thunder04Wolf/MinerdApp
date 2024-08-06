@@ -16,6 +16,8 @@ import ViewAllVisit from "./screens/ViewAllVisit";
 import VisitDetailsScreen from "./screens/VisitDetailsScreen";
 import SearchSchoolsByRegion from "./screens/SearchSchoolsByRegion";
 import SchoolDetails from "./screens/SchoolDetails";
+import ListDirectors from "./screens/ListDirectors";
+import MapScreen from "./screens/MapScreen";
 
 
 
@@ -54,6 +56,8 @@ export default function App() {
         <Stack.Screen name="VisitDetailsScreen" component={VisitDetailsScreen} />
         <Stack.Screen name="SearchSchoolsByRegion" component={SearchSchoolsByRegion} />
         <Stack.Screen name="SchoolDetails" component={SchoolDetails} />
+        <Stack.Screen name="Lista de Cédulas de Directores" component={ListDirectors} />
+        <Stack.Screen name="MapScreen" component={MapScreen} />
 
 
 

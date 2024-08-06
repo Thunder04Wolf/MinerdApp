@@ -49,6 +49,8 @@ export default function TechMenu({ navigation }) {
       <Button title="Ver Visitas Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
       <Button title="Ver Todas las Visitas Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
       <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SearchSchoolsByRegion')} />
+      <Button title="Lista de Cédulas de Directores" onPress={() => navigation.navigate('Lista de Cédulas de Directores')} />
+      <Button title="MapScreen" onPress={() => navigation.navigate('MapScreen')} />
 
     </View>
   );

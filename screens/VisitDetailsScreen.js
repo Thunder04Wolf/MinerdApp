@@ -6,7 +6,7 @@ export default function VisitDetails({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{visit.motivo}</Text>
+      <Text style={styles.title}>Motivo: {visit.motivo}</Text>
       <Text style={styles.detailText}>Código del Centro: {visit.codigo_centro}</Text>
       <Text style={styles.detailText}>Cédula del Director: {visit.cedula_director}</Text>
       <Text style={styles.detailText}>Fecha: {visit.fecha}</Text>
