@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 // import photo from '../assets/photo.png';
 
+//pantalla sobre la info de los usuarios
 export default function AboutScreen() {
   return (
     <View style={styles.container}>
