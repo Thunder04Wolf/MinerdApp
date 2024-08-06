@@ -48,6 +48,7 @@ export default function TechMenu({ navigation }) {
       <Button title="Registrar Incidencia" onPress={() => navigation.navigate('RegisterVisit')} />
       <Button title="Ver Incidencias Registradas" onPress={() => navigation.navigate('ViewOurVisits')} />
       <Button title="Ver Todas las Incidencias Registradas" onPress={() => navigation.navigate('ViewAllVisits')} />
+      <Button title="Busqueda de escuela por su código" onPress={() => navigation.navigate('SeacrhScreen')} />
 
     </View>
   );
