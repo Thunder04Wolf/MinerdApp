@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 
+//pantalla de mapa
+
 const API_URL = 'https://adamix.net/minerd/def/situaciones.php?token=675c960f996d475d0af19b45a2da9757';
 
 const MapScreen = ({ navigation }) => {

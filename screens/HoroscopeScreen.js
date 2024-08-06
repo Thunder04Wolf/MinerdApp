@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getZodiacSign } from './ZodiacSign'; // Asegúrate de tener esta función en el archivo ZodiacSign.js
 
+//pantalla para ver los horoscopos
+
 export default function HoroscopeScreen() {
   const [horoscope, setHoroscope] = useState(null);
   const [loading, setLoading] = useState(false);

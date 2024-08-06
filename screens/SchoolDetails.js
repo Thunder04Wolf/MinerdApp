@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+// detalles de las escuelas
+
 export default function SchoolDetails({ route }) {
   // Desestructuramos los parámetros de la ruta para obtener la información de la escuela
   const { school } = route.params;

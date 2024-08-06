@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// pantalla de login
+
 export default function LoginScreen({ navigation }) {
   const [cedula, setCedula] = useState('');
   const [clave, setClave] = useState('');

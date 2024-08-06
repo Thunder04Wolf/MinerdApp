@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
 import { Audio } from 'expo-av';
 
+//pantalla para ver las incidencias
+
 export default function IncidenceDetailScreen({ route }) {
   const { incidence } = route.params;
   const [sound, setSound] = useState();

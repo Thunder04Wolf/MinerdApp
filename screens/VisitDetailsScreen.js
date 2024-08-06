@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 
+//pantalla para ver las detalles
+
 export default function VisitDetailScreen({ route }) {
   const { visit } = route.params;
   const [weather, setWeather] = useState(null);

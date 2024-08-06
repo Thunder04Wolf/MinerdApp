@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
+// //pantalla para poder registrar
+
 export default function RegisterScreen({ navigation }) {
   const [cedula, setCedula] = useState('');
   const [nombre, setNombre] = useState('');

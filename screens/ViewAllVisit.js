@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// ver todas las visitas
+
 export default function ViewAllVisits({ navigation }) {
   const [visitTypes, setVisitTypes] = useState([]);
   const [loading, setLoading] = useState(true);

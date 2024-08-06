@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 
+// pantalla para ver el listado de directores
+
 const API_URL = 'https://adamix.net/minerd/def/situacion.php?token=675c960f996d475d0af19b45a2da9757';
 
 const fetchDirectorsCedulas = async (situacionId) => {

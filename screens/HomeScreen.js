@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, Button, StyleSheet, Alert, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//opciones para poder interactuar con cada pantalla
 const clearStorage = async () => {
   try {
     await AsyncStorage.clear();

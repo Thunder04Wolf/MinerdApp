@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// ver todas las incidencias
+
 export default function ViewIncidentsScreen({ navigation }) {
   const [incidents, setIncidents] = useState([]);
 

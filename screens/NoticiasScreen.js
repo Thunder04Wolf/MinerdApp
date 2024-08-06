@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
+// pantalla para ver las noticias importantes
+
 const NoticiasScreen = () => {
     const [noticias, setNoticias] = useState([]);
 

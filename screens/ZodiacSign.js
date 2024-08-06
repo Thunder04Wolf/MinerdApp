@@ -1,4 +1,7 @@
 // ZodiacSign.js
+
+// pantalla para ver que signo zodiacal eres
+
 export function getZodiacSign(date) {
     const month = date.getMonth() + 1; // Enero es 0
     const day = date.getDate();

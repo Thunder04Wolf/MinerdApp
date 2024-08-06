@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 
+// ver todas las escuelas por region
+
 export default function SearchSchoolsByRegion({ navigation }) {
   const [regionCode, setRegionCode] = useState('');
   const [schools, setSchools] = useState([]);
