@@ -10,22 +10,27 @@ export default function SchoolDetails({ route }) {
 
   return (
     <View style={styles.container}>
+      {/* Muestra el nombre de la escuela */}
       <Text style={styles.label}>Nombre:</Text>
       <Text style={styles.value}>{school.nombre}</Text>
 
+      {/* Muestra el código de la escuela */}
       <Text style={styles.label}>Código:</Text>
       <Text style={styles.value}>{school.codigo}</Text>
 
+      {/* Muestra el distrito de la escuela */}
       <Text style={styles.label}>Distrito:</Text>
       <Text style={styles.value}>{school.distrito}</Text>
 
-      {/* Otros datos disponibles, pero no visibles por defecto */}
+      {/* Muestra las coordenadas de la escuela */}
       <Text style={styles.label}>Coordenadas:</Text>
       <Text style={styles.value}>{school.coordenadas}</Text>
 
+      {/* Muestra la región de la escuela */}
       <Text style={styles.label}>Regional:</Text>
       <Text style={styles.value}>{school.regional}</Text>
 
+      {/* Muestra el D.D. Municipal de la escuela */}
       <Text style={styles.label}>D.D. Municipal:</Text>
       <Text style={styles.value}>{school.d_dmunicipal}</Text>
     </View>

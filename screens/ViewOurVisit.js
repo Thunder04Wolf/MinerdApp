@@ -3,14 +3,18 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, 
 import { useAuth } from './useAuth';
 
 export default function ViewOurVisits({ navigation }) {
+  // Estado para almacenar la lista de visitas y el estado de carga
   const [visits, setVisits] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Función para obtener las visitas desde el servidor
   const fetchVisits = async (authToken) => {
     try {
+      // Solicitud para obtener las visitas usando el token de autenticación
       const response = await fetch(`https://adamix.net/minerd/def/situaciones.php?token=${authToken}`);
       const result = await response.json();
 
+      // Verifica si la respuesta fue exitosa y actualiza el estado con los datos de visitas
       if (result.exito) {
         setVisits(result.datos);
       } else {
@@ -20,12 +24,15 @@ export default function ViewOurVisits({ navigation }) {
       Alert.alert('Error', 'No se pudo conectar con el servidor.');
       console.error(error);
     } finally {
+      // Termina el estado de carga independientemente del resultado
       setLoading(false);
     }
   };
 
+  // Usa el hook de autenticación y pasa la función de obtención de visitas
   useAuth(navigation, fetchVisits);
 
+  // Función para renderizar cada ítem de visita
   const renderVisitItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
@@ -47,11 +54,13 @@ export default function ViewOurVisits({ navigation }) {
   return (
     <View style={styles.container}>
       {loading ? (
+        // Muestra un indicador de carga mientras se obtienen los datos
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007BFF" />
           <Text style={styles.loadingText}>Cargando visitas...</Text>
         </View>
       ) : (
+        // Muestra la lista de visitas o un mensaje si no hay visitas
         <FlatList
           data={visits}
           renderItem={renderVisitItem}
@@ -74,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 10,
-    elevation: 2,
+    elevation: 2, // Sombra para el efecto de profundidad
   },
   itemTitle: {
     fontSize: 18,

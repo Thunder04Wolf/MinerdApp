@@ -1,28 +1,37 @@
+// NoticiasScreen.js
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
+// Componente principal para la pantalla de noticias
 const NoticiasScreen = () => {
+    // Estado para almacenar las noticias
     const [noticias, setNoticias] = useState([]);
 
+    // Hook useEffect para obtener las noticias cuando el componente se monta
     useEffect(() => {
         const fetchNoticias = async () => {
             try {
+                // Realiza la solicitud GET para obtener las noticias desde el API
                 const response = await fetch('https://remolacha.net/wp-json/wp/v2/posts?search=minerd');
                 const data = await response.json();
-                setNoticias(data);
+                setNoticias(data); // Actualiza el estado con las noticias obtenidas
             } catch (error) {
-                console.error(error);
-                alert('Error al cargar las noticias');
+                console.error(error); // Muestra el error en la consola
+                alert('Error al cargar las noticias'); // Muestra un mensaje de error
             }
         };
 
-        fetchNoticias();
+        fetchNoticias(); // Llama a la función para obtener las noticias
     }, []);
 
+    // Función para renderizar cada ítem de la lista de noticias
     const renderItem = ({ item }) => (
         <TouchableOpacity style={styles.item} onPress={() => alert(item.link)}>
             <Text style={styles.title}>{item.title.rendered}</Text>
-            <Text style={styles.excerpt}>{item.excerpt.rendered.replace(/<\/?[^>]+(>|$)/g, "")}</Text>
+            <Text style={styles.excerpt}>
+                {item.excerpt.rendered.replace(/<\/?[^>]+(>|$)/g, "")}
+            </Text>
         </TouchableOpacity>
     );
 
@@ -30,15 +39,16 @@ const NoticiasScreen = () => {
         <View style={styles.container}>
             <Text style={styles.header}>Noticias MINERD</Text>
             <FlatList
-                data={noticias}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.list}
+                data={noticias} // Datos a mostrar en la lista
+                renderItem={renderItem} // Función para renderizar cada ítem
+                keyExtractor={(item) => item.id.toString()} // Llave única para cada ítem
+                contentContainerStyle={styles.list} // Estilos para el contenedor de la lista
             />
         </View>
     );
 };
 
+// Estilos para la pantalla de noticias
 const styles = StyleSheet.create({
     container: {
         flex: 1,

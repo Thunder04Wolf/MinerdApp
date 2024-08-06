@@ -21,11 +21,11 @@ import SchoolDetails from './screens/SchoolDetails';
 import ListDirectors from './screens/ListDirectors';
 import MapScreen from './screens/MapScreen';
 
-// Create stacks
+// Crear pilas de navegación
 const AuthStack = createNativeStackNavigator();
 const MainStack = createNativeStackNavigator();
 
-// Auth stack
+// Pilas de navegación para la autenticación
 function AuthStackScreen() {
   return (
     <AuthStack.Navigator initialRouteName="Login">
@@ -35,7 +35,7 @@ function AuthStackScreen() {
   );
 }
 
-// Main stack
+// Pilas de navegación principal
 function MainStackScreen() {
   return (
     <MainStack.Navigator initialRouteName="Home">
@@ -58,7 +58,7 @@ function MainStackScreen() {
   );
 }
 
-// Main App Component
+// Componente principal de la aplicación
 export default function App() {
   const navigationRef = useNavigationContainerRef();
 
@@ -71,7 +71,8 @@ export default function App() {
   );
 }
 
+// Navegador raíz para gestionar la autenticación
 const RootNavigator = () => {
-  const { isAuthenticated } = useContext(AuthContext);
-  return isAuthenticated ? <MainStackScreen /> : <AuthStackScreen />;
+  const { isAuthenticated } = useContext(AuthContext); // Obtiene el estado de autenticación desde el contexto
+  return isAuthenticated ? <MainStackScreen /> : <AuthStackScreen />; // Muestra la pila de autenticación o la principal según el estado
 };

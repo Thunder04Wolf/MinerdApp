@@ -17,6 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterVisitScreen({ navigation }) {
+  // Estados para manejar los datos de la visita
   const [cedulaDirector, setCedulaDirector] = useState("");
   const [codigoCentro, setCodigoCentro] = useState("");
   const [motivo, setMotivo] = useState("");
@@ -34,14 +35,17 @@ export default function RegisterVisitScreen({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
+  // Efecto para obtener el token y los motivos al cargar el componente
   useEffect(() => {
     const fetchTokenAndMotivos = async () => {
       try {
+        // Obtener el token almacenado
         const storedToken = await AsyncStorage.getItem("token");
         if (storedToken) {
           setToken(storedToken);
         }
 
+        // Obtener los motivos desde la API
         const response = await fetch("https://adamix.net/minerd/def/motivos.php");
         const data = await response.json();
         if (data.motivos) {
@@ -57,19 +61,23 @@ export default function RegisterVisitScreen({ navigation }) {
     fetchTokenAndMotivos();
   }, []);
 
+  // Maneja el cambio de fecha en el DateTimePicker
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || fecha;
-    setShowDatePicker(Platform.OS === "ios");
+    setShowDatePicker(Platform.OS === "ios"); // Mostrar el picker solo en iOS
     setFecha(currentDate);
   };
 
+  // Maneja el cambio de hora en el DateTimePicker
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || hora;
-    setShowTimePicker(Platform.OS === "ios");
+    setShowTimePicker(Platform.OS === "ios"); // Mostrar el picker solo en iOS
     setHora(currentTime);
   };
 
+  // Maneja el registro de la visita
   const handleRegister = async () => {
+    // Verificar que todos los campos requeridos estén llenos
     if (!cedulaDirector || !codigoCentro || !motivo || !comentario) {
       Alert.alert("Error", "Todos los campos son requeridos.");
       return;
@@ -90,6 +98,7 @@ export default function RegisterVisitScreen({ navigation }) {
       formData.append("latitud", latitud);
       formData.append("longitud", longitud);
 
+      // Agregar foto si está disponible
       if (fotoUri) {
         formData.append("foto", {
           uri: fotoUri,
@@ -98,6 +107,7 @@ export default function RegisterVisitScreen({ navigation }) {
         });
       }
 
+      // Agregar audio si está disponible
       if (audioUri) {
         formData.append("audio", {
           uri: audioUri,
@@ -106,6 +116,7 @@ export default function RegisterVisitScreen({ navigation }) {
         });
       }
 
+      // Enviar los datos al servidor
       let response = await fetch(url, {
         method: "POST",
         headers: {
@@ -115,6 +126,7 @@ export default function RegisterVisitScreen({ navigation }) {
       });
 
       let result = await response.json();
+      // Manejar la respuesta del servidor
       if (result.exito) {
         Alert.alert("Éxito", "Visita registrada exitosamente");
         navigation.navigate("Home");
@@ -209,6 +221,7 @@ export default function RegisterVisitScreen({ navigation }) {
   );
 }
 
+// Estilos para la pantalla de registro de visita
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

@@ -14,6 +14,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function RegisterScreen({ navigation }) {
+  // Estados para manejar los valores de los campos de entrada
   const [cedula, setCedula] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
@@ -32,6 +33,7 @@ export default function RegisterScreen({ navigation }) {
     fechaNacimiento: false,
   });
 
+  // Formatea la cédula con guiones
   const formatCedula = (text) => {
     let formattedText = text.replace(/\D/g, '');
     if (formattedText.length > 11) {
@@ -46,12 +48,13 @@ export default function RegisterScreen({ navigation }) {
     return formattedText;
   };
 
+  // Formatea el teléfono con guiones
   const formatTelefono = (text) => {
     let formattedText = text.replace(/\D/g, '');
     if (formattedText.length > 10) {
       formattedText = formattedText.slice(0, 10);
     }
-    if ((formattedText.length > 3) && formattedText.lenght <= 6) {
+    if ((formattedText.length > 3) && formattedText.length <= 6) {
       formattedText = `${formattedText.slice(0, 3)}${formattedText.slice(3)}`;
     }
     if (formattedText.length > 6) {
@@ -60,7 +63,9 @@ export default function RegisterScreen({ navigation }) {
     return formattedText;
   };
 
+  // Maneja el registro del usuario
   const handleRegister = async () => {
+    // Verifica si hay campos vacíos y muestra errores
     const newErrorFields = {
       cedula: !cedula,
       nombre: !nombre,
@@ -73,27 +78,31 @@ export default function RegisterScreen({ navigation }) {
 
     setErrorFields(newErrorFields);
 
+    // Si hay errores, muestra una alerta
     if (Object.values(newErrorFields).includes(true)) {
       Alert.alert('Error', 'Todos los campos son requeridos.');
       return;
     } else {
+      // Si no hay errores, guarda al usuario
       await saveUser();
     }
   };
 
+  // Guarda los datos del usuario en el servidor
   const saveUser = async () => {
     const url = "https://adamix.net/minerd/def/registro.php";
 
     try {
       let formData = new FormData();
-      formData.append('cedula', cedula.replace(/-/g, ''));
+      formData.append('cedula', cedula.replace(/-/g, '')); // Elimina los guiones para el backend
       formData.append('nombre', nombre);
       formData.append('apellido', apellido);
       formData.append('clave', clave);
       formData.append('correo', correo);
-      formData.append('telefono', telefono.replace(/\D/g, '')); // Remove formatting for backend
+      formData.append('telefono', telefono.replace(/\D/g, '')); // Elimina la formateo para el backend
       formData.append('fecha_nacimiento', fechaNacimiento.toISOString().split('T')[0]);
 
+      // Realiza la solicitud POST al servidor
       let response = await fetch(url, {
         method: "POST",
         body: formData
@@ -101,6 +110,7 @@ export default function RegisterScreen({ navigation }) {
 
       let result = await response.json();
 
+      // Maneja la respuesta del servidor
       if (result.exito) {
         Alert.alert('Éxito', 'Registro exitoso');
         navigation.navigate('Login', { cedula: cedula.replace(/-/g, '') });
@@ -113,9 +123,10 @@ export default function RegisterScreen({ navigation }) {
     }
   };
 
+  // Maneja el cambio de la fecha seleccionada
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || fechaNacimiento;
-    setShowPicker(Platform.OS === 'ios');
+    setShowPicker(Platform.OS === 'ios'); // Solo mostrar el picker en iOS
     setFechaNacimiento(currentDate);
   };
 
@@ -163,7 +174,7 @@ export default function RegisterScreen({ navigation }) {
             onChangeText={(text) => setTelefono(formatTelefono(text))}
             keyboardType="phone-pad"
             style={[styles.input, errorFields.telefono && styles.errorInput]}
-            maxLength={12}  // Max length for Dominican phone number format (xxx-xxx-xxxx)
+            maxLength={12}  // Longitud máxima para el formato de teléfono (xxx-xxx-xxxx)
           />
           <TouchableOpacity style={[styles.input, styles.datePicker]} onPress={() => setShowPicker(true)}>
             <Text style={styles.dateText}>
@@ -187,24 +198,25 @@ export default function RegisterScreen({ navigation }) {
   );
 }
 
+// Estilos para la pantalla de registro
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
     backgroundColor: '#f0f0f0',
-    justifyContent: 'center',  // Center content vertically
-    alignItems: 'center',      // Center content horizontally
+    justifyContent: 'center',  // Centra el contenido verticalmente
+    alignItems: 'center',      // Centra el contenido horizontalmente
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 32,
-    textAlign: 'center',  // Center title
+    textAlign: 'center',  // Centra el título
   },
   formContainer: {
     width: '100%',
-    maxWidth: 400, // Limit max width for larger screens
+    maxWidth: 400, // Limita el ancho máximo para pantallas más grandes
   },
   input: {
     width: '100%',

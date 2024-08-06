@@ -18,6 +18,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
   const [location, setLocation] = useState(null);
   const soundRef = useRef(null);
 
+  // Solicita permisos para el micrófono, la biblioteca de imágenes y la ubicación al montar el componente
   useEffect(() => {
     (async () => {
       const { status: audioStatus } = await Audio.requestPermissionsAsync();
@@ -29,6 +30,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
     })();
   }, []);
 
+  // Obtiene la ubicación actual del dispositivo
   useEffect(() => {
     (async () => {
       let { coords } = await Location.getCurrentPositionAsync({});
@@ -36,6 +38,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
     })();
   }, []);
 
+  // Maneja la selección de una foto desde la biblioteca
   const handlePhotoPick = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,6 +56,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
     }
   };
 
+  // Maneja la grabación de audio
   const handleAudioRecord = async () => {
     try {
       if (recording) {
@@ -76,16 +80,19 @@ export default function RegisterIncidenceScreen({ navigation }) {
     }
   };
 
+  // Maneja el cambio de fecha
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
   };
 
+  // Maneja el cambio de hora
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || time;
     setTime(currentTime);
   };
 
+  // Envía la incidencia y la guarda en AsyncStorage
   const handleSubmit = async () => {
     if (!directorId || !centerCode || !date || !time) {
       Alert.alert('Error', 'Por favor, proporciona todos los campos obligatorios.');
@@ -182,6 +189,7 @@ export default function RegisterIncidenceScreen({ navigation }) {
   );
 }
 
+// Estilos para la pantalla de registro de incidencias
 const styles = StyleSheet.create({
   container: {
     flex: 1,

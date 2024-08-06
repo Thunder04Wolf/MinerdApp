@@ -3,19 +3,28 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ViewIncidentsScreen({ navigation }) {
+  // Estado para almacenar los incidentes
   const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
+    // Función para obtener los incidentes almacenados
     const fetchIncidents = async () => {
-      const storedIncidents = await AsyncStorage.getItem('incidents');
-      if (storedIncidents) {
-        setIncidents(JSON.parse(storedIncidents));
+      try {
+        // Obtiene los incidentes almacenados en AsyncStorage
+        const storedIncidents = await AsyncStorage.getItem('incidents');
+        if (storedIncidents) {
+          // Actualiza el estado con los incidentes obtenidos
+          setIncidents(JSON.parse(storedIncidents));
+        }
+      } catch (error) {
+        console.error('Error al obtener incidentes:', error);
       }
     };
 
     fetchIncidents();
-  }, []);
+  }, []); // El array vacío asegura que esta función se ejecute solo una vez al montar el componente
 
+  // Función para renderizar cada incidencia en la lista
   const renderIncidence = ({ item }) => (
     <TouchableOpacity
       onPress={() => navigation.navigate('IncidenceDetail', { incidence: item })}
@@ -30,9 +39,9 @@ export default function ViewIncidentsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={incidents}
-        renderItem={renderIncidence}
-        keyExtractor={(item, index) => index.toString()}
+        data={incidents} // Los datos que se mostrarán en la lista
+        renderItem={renderIncidence} // Función que renderiza cada ítem
+        keyExtractor={(item, index) => index.toString()} // Genera una clave única para cada ítem
       />
     </View>
   );
@@ -45,6 +54,6 @@ const styles = StyleSheet.create({
   },
   incidence: {
     padding: 16,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1, // Agrega una línea en la parte inferior de cada ítem
   },
 });
