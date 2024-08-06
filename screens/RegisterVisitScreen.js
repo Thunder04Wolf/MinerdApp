@@ -1,19 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Modal, FlatList, TouchableOpacity, Text, ActivityIndicator, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  Alert,
+  Modal,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  Platform,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterVisitScreen({ navigation }) {
-  const [cedulaDirector, setCedulaDirector] = useState('');
-  const [codigoCentro, setCodigoCentro] = useState('');
-  const [motivo, setMotivo] = useState('');
-  const [fotoEvidencia, setFotoEvidencia] = useState('');
-  const [comentario, setComentario] = useState('');
-  const [latitud, setLatitud] = useState('');
-  const [longitud, setLongitud] = useState('');
+  const [cedulaDirector, setCedulaDirector] = useState("");
+  const [codigoCentro, setCodigoCentro] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [comentario, setComentario] = useState("");
+  const [fotoUri, setFotoUri] = useState("");
+  const [audioUri, setAudioUri] = useState("");
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
-  const [token, setToken] = useState('');
+  const [latitud, setLatitud] = useState("");
+  const [longitud, setLongitud] = useState("");
+  const [token, setToken] = useState("");
   const [motivos, setMotivos] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoadingMotivos, setIsLoadingMotivos] = useState(true);
@@ -23,18 +37,18 @@ export default function RegisterVisitScreen({ navigation }) {
   useEffect(() => {
     const fetchTokenAndMotivos = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('userToken');
+        const storedToken = await AsyncStorage.getItem("userToken");
         if (storedToken) {
           setToken(storedToken);
           await fetchAllMotivos(storedToken);
         } else {
-          Alert.alert('Error', 'No se encontró un token de autenticación.');
-          navigation.navigate('Login');
+          Alert.alert("Error", "No se encontró un token de autenticación.");
+          navigation.navigate("Login");
         }
       } catch (e) {
         console.error(e);
-        Alert.alert('Error', 'Hubo un problema al obtener el token.');
-        navigation.navigate('Login');
+        Alert.alert("Error", "Hubo un problema al obtener el token.");
+        navigation.navigate("Login");
       }
     };
 
@@ -44,26 +58,19 @@ export default function RegisterVisitScreen({ navigation }) {
   const fetchAllMotivos = async (authToken) => {
     try {
       const allMotivos = [];
-      const urlBase = 'https://adamix.net/minerd/def/situacion.php?token=';
+      const urlBase = "https://adamix.net/minerd/def/situacion.php?token=";
 
       for (let id = 1; id <= 35; id++) {
         const url = `${urlBase}${authToken}&situacion_id=${id}`;
         let response = await fetch(url);
         let result = await response.json();
 
-        // Mostrar la respuesta completa de la API en consola
-        console.log(`Respuesta para ID ${id}:`, result);
-
         if (result.exito && result.datos && result.datos.motivo) {
           allMotivos.push(result.datos.motivo);
         }
       }
 
-      // Eliminar duplicados
       const uniqueMotivos = Array.from(new Set(allMotivos));
-      console.log('Motivos únicos:', uniqueMotivos);
-
-      // Mapear los motivos para incluir un id ficticio para la lista
       const motivoList = uniqueMotivos.map((motivo, index) => ({
         id: index.toString(),
         motivo,
@@ -72,7 +79,7 @@ export default function RegisterVisitScreen({ navigation }) {
       setMotivos(motivoList);
       setIsLoadingMotivos(false);
     } catch (error) {
-      Alert.alert('Error', 'No se pudo conectar con el servidor.');
+      Alert.alert("Error", "No se pudo conectar con el servidor.");
       console.error(error);
       setIsLoadingMotivos(false);
     }
@@ -80,13 +87,13 @@ export default function RegisterVisitScreen({ navigation }) {
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || fecha;
-    setShowDatePicker(Platform.OS === 'ios');
+    setShowDatePicker(Platform.OS === "ios");
     setFecha(currentDate);
   };
 
   const handleTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || hora;
-    setShowTimePicker(Platform.OS === 'ios');
+    setShowTimePicker(Platform.OS === "ios");
     setHora(currentTime);
   };
 
@@ -99,46 +106,54 @@ export default function RegisterVisitScreen({ navigation }) {
   };
 
   const handleRegisterVisit = async () => {
-    if (!cedulaDirector || !codigoCentro || !motivo || !comentario || !latitud || !longitud || !fecha || !hora || !token) {
-      Alert.alert('Error', 'Todos los campos son requeridos.');
+    if (
+      !cedulaDirector ||
+      !codigoCentro ||
+      !motivo ||
+      !comentario ||
+      !latitud ||
+      !longitud ||
+      !fecha ||
+      !hora ||
+      !token
+    ) {
+      Alert.alert("Error", "Todos los campos son requeridos.");
       return;
     }
 
-    const formattedDate = fecha.toISOString().split('T')[0];
+    const formattedDate = fecha.toISOString().split("T")[0];
     const formattedTime = hora.toTimeString().substring(0, 5);
 
     try {
-      const url = 'https://adamix.net/minerd/minerd/registrar_visita.php';
+      const url = "https://adamix.net/minerd/minerd/registrar_visita.php";
       let formData = new FormData();
-      formData.append('cedula_director', cedulaDirector);
-      formData.append('codigo_centro', codigoCentro);
-      formData.append('motivo', motivo);
-      formData.append('foto_evidencia', fotoEvidencia);
-      formData.append('comentario', comentario);
-      formData.append('nota_voz', ''); // Aquí puedes añadir el URI del audio si es necesario
-      formData.append('latitud', latitud);
-      formData.append('longitud', longitud);
-      formData.append('fecha', formattedDate);
-      formData.append('hora', formattedTime);
-      formData.append('token', token);
+      formData.append("cedula_director", cedulaDirector);
+      formData.append("codigo_centro", codigoCentro);
+      formData.append("motivo", motivo);
+      formData.append("comentario", comentario);
+      formData.append("latitud", latitud);
+      formData.append("longitud", longitud);
+      formData.append("fecha", formattedDate);
+      formData.append("hora", formattedTime);
+      formData.append("token", token);
+      formData.append("foto_evidencia", fotoUri);
+      formData.append("nota_voz", audioUri);
 
       let response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       let result = await response.json();
 
       if (result.exito) {
-        Alert.alert('Éxito', 'Visita registrada exitosamente');
-        navigation.navigate('Home');
+        Alert.alert("Éxito", "Visita registrada exitosamente");
+        navigation.navigate("Home");
       } else {
-        Alert.alert('Error', result.mensaje);
+        Alert.alert("Error", result.mensaje);
       }
-
-      console.log(result);
     } catch (error) {
-      Alert.alert('Error', 'No se pudo conectar con el servidor.');
+      Alert.alert("Error", "No se pudo conectar con el servidor.");
       console.error(error);
     }
   };
@@ -175,11 +190,14 @@ export default function RegisterVisitScreen({ navigation }) {
           if (!isLoadingMotivos) {
             setModalVisible(true);
           } else {
-            Alert.alert('Cargando', 'Por favor, espere mientras se cargan los motivos.');
+            Alert.alert(
+              "Cargando",
+              "Por favor, espere mientras se cargan los motivos."
+            );
           }
         }}
       >
-        <Text>{motivo || 'Selecciona el motivo'}</Text>
+        <Text>{motivo || "Selecciona el motivo"}</Text>
       </TouchableOpacity>
       <TextInput
         placeholder="Comentario"
@@ -197,6 +215,18 @@ export default function RegisterVisitScreen({ navigation }) {
         placeholder="Longitud"
         value={longitud}
         onChangeText={setLongitud}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Ruta de la Imagen"
+        value={fotoUri}
+        onChangeText={setFotoUri}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Ruta del Audio"
+        value={audioUri}
+        onChangeText={setAudioUri}
         style={styles.input}
       />
       <Button title="Seleccionar Fecha" onPress={showDatepicker} />
@@ -217,7 +247,7 @@ export default function RegisterVisitScreen({ navigation }) {
           onChange={handleTimeChange}
         />
       )}
-      <Text>Fecha: {fecha.toISOString().split('T')[0]}</Text>
+      <Text>Fecha: {fecha.toISOString().split("T")[0]}</Text>
       <Text>Hora: {hora.toTimeString().substring(0, 5)}</Text>
       <Button title="Registrar Visita" onPress={handleRegisterVisit} />
 
@@ -251,32 +281,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderBottomWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
   },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: "cover",
+    marginVertical: 16,
+  },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
+    width: "80%",
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    width: '100%',
+    borderBottomColor: "#ccc",
+    width: "100%",
   },
 });
