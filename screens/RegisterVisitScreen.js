@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Modal, FlatList, TouchableOpacity, Text, ActivityIndicator, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  View, Text, TextInput, Button, StyleSheet, Image, Alert, Modal, FlatList,
+  TouchableOpacity, ActivityIndicator, Platform
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterVisitScreen({ navigation }) {
   const [cedulaDirector, setCedulaDirector] = useState('');
   const [codigoCentro, setCodigoCentro] = useState('');
   const [motivo, setMotivo] = useState('');
-  const [fotoEvidencia, setFotoEvidencia] = useState('');
   const [comentario, setComentario] = useState('');
-  const [latitud, setLatitud] = useState('');
-  const [longitud, setLongitud] = useState('');
+  const [fotoUri, setFotoUri] = useState('');
+  const [audioUri, setAudioUri] = useState('');
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
+  const [latitud, setLatitud] = useState('');
+  const [longitud, setLongitud] = useState('');
   const [token, setToken] = useState('');
   const [motivos, setMotivos] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,19 +55,12 @@ export default function RegisterVisitScreen({ navigation }) {
         let response = await fetch(url);
         let result = await response.json();
 
-        // Mostrar la respuesta completa de la API en consola
-        console.log(`Respuesta para ID ${id}:`, result);
-
         if (result.exito && result.datos && result.datos.motivo) {
           allMotivos.push(result.datos.motivo);
         }
       }
 
-      // Eliminar duplicados
       const uniqueMotivos = Array.from(new Set(allMotivos));
-      console.log('Motivos únicos:', uniqueMotivos);
-
-      // Mapear los motivos para incluir un id ficticio para la lista
       const motivoList = uniqueMotivos.map((motivo, index) => ({
         id: index.toString(),
         motivo,
@@ -113,14 +110,16 @@ export default function RegisterVisitScreen({ navigation }) {
       formData.append('cedula_director', cedulaDirector);
       formData.append('codigo_centro', codigoCentro);
       formData.append('motivo', motivo);
-      formData.append('foto_evidencia', fotoEvidencia);
       formData.append('comentario', comentario);
-      formData.append('nota_voz', ''); // Aquí puedes añadir el URI del audio si es necesario
       formData.append('latitud', latitud);
       formData.append('longitud', longitud);
       formData.append('fecha', formattedDate);
       formData.append('hora', formattedTime);
       formData.append('token', token);
+formData.append('foto_evidencia', fotoUri);
+formData.append('nota_voz', audioUri);
+    
+
 
       let response = await fetch(url, {
         method: 'POST',
@@ -135,8 +134,6 @@ export default function RegisterVisitScreen({ navigation }) {
       } else {
         Alert.alert('Error', result.mensaje);
       }
-
-      console.log(result);
     } catch (error) {
       Alert.alert('Error', 'No se pudo conectar con el servidor.');
       console.error(error);
@@ -199,6 +196,18 @@ export default function RegisterVisitScreen({ navigation }) {
         onChangeText={setLongitud}
         style={styles.input}
       />
+      <TextInput
+        placeholder="Ruta de la Imagen"
+        value={fotoUri}
+        onChangeText={setFotoUri}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Ruta del Audio"
+        value={audioUri}
+        onChangeText={setAudioUri}
+        style={styles.input}
+      />
       <Button title="Seleccionar Fecha" onPress={showDatepicker} />
       {showDatePicker && (
         <DateTimePicker
@@ -259,6 +268,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+    marginVertical: 16,
   },
   modalContainer: {
     flex: 1,
